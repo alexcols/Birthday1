@@ -2,7 +2,7 @@
 using Birthday.Application.repositories;
 using Birthday.Infrastructure.DataAccess;
 using Birthday.Infrastructure.DataAccess.Repositories;
-using Birthday.Infrastructure.Migrations;
+//using Birthday.Infrastructure.Migrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -38,8 +38,8 @@ namespace Birthday.Infrastructure
             {
                 options.UseNpgsql(connectionString, builder =>
                     builder.MigrationsAssembly(
-                //typeof( DataAccessModule).Assembly.FullName)
-                typeof(DatabaseContextModelSnapshot).Assembly.FullName)
+                typeof( DataAccessModule).Assembly.FullName)
+                //typeof(DatabaseContextModelSnapshot).Assembly.FullName)
                 );
             });
 

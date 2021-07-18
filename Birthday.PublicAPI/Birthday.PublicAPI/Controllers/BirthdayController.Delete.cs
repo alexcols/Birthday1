@@ -10,7 +10,7 @@ namespace Birthday.PublicAPI.Controllers
     {
         // POST: BirthdayController/Delete/5
         [HttpDelete ("{id:int}")]
-        [ValidateAntiForgeryToken]
+        
         public async Task<ActionResult> Delete(
             [FromRoute]int id, CancellationToken cancellationToken)
         {

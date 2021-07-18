@@ -29,22 +29,30 @@ namespace Birthday.Infrastructure.Migrations
                 name: "Birthdays",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: true),
                     SecondName = table.Column<string>(type: "text", nullable: true),
                     Date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    DateWithoutYear = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    DateWithoutYear = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    PhotoId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Birthdays", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Birthdays_Photos_Id",
-                        column: x => x.Id,
+                        name: "FK_Birthdays_Photos_PhotoId",
+                        column: x => x.PhotoId,
                         principalTable: "Photos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Birthdays_PhotoId",
+                table: "Birthdays",
+                column: "PhotoId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Photos_PersonId",
@@ -63,7 +71,7 @@ namespace Birthday.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Birthdays_Photos_Id",
+                name: "FK_Birthdays_Photos_PhotoId",
                 table: "Birthdays");
 
             migrationBuilder.DropTable(

@@ -71,10 +71,16 @@ namespace Birthday.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<int>("PhotoId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("SecondName")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PhotoId")
+                        .IsUnique();
 
                     b.ToTable("Birthdays");
                 });
@@ -86,6 +92,17 @@ namespace Birthday.Infrastructure.Migrations
                         .HasForeignKey("PersonId");
 
                     b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("Birthday.Domain.Person", b =>
+                {
+                    b.HasOne("Birthday.Domain.Image", "Photo")
+                        .WithOne()
+                        .HasForeignKey("Birthday.Domain.Person", "PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Photo");
                 });
 #pragma warning restore 612, 618
         }

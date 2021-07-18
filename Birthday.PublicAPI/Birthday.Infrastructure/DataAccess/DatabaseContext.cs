@@ -26,9 +26,11 @@ namespace Birthday.Infrastructure.DataAccess
                 builder.Property(p => p.SecondName);
                 builder.Property(p => p.Date);
                 builder.Property(p => p.DateWithoutYear);
-                //builder.HasOne(p => p.Photo)
-                //    .WithMany()
-                //    .OnDelete(DeleteBehavior.Cascade);
+                //builder.Property(p => p.PhotoId);
+                builder.HasOne(p => p.Photo)
+                    .WithOne();
+                    
+
             });
             modelBuilder.Entity<Image>(builder => {
                 builder.HasKey(i => i.Id);
@@ -44,6 +46,11 @@ namespace Birthday.Infrastructure.DataAccess
                     .IsUnicode();
 
                 builder.Property(i => i.Content).IsRequired();
+
+                //builder.HasOne(i => i.Person)
+                //    .WithOne()
+                //   ;
+
             });
 
             base.OnModelCreating(modelBuilder);

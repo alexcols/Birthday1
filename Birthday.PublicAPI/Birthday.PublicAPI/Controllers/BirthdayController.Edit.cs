@@ -1,4 +1,5 @@
 ﻿using Birthday.Application.contracts;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -18,16 +19,7 @@ namespace Birthday.PublicAPI.Controllers
             [FromForm] BirthdayEditRequest request, 
             CancellationToken cancellationToken)
         {
-            int year;
-            if (request.Year == null)
-            {
-                year = 1;
-            }
-            else
-            {
-                year = (int)request.Year;
-            }
-
+         
             await _birthdayService.Edit(new EditBirthday.Request
             {
                 Id = request.Id,
@@ -35,7 +27,8 @@ namespace Birthday.PublicAPI.Controllers
                 SecondName = request.SecondName,
                 Day = request.Day,
                 Month = request.Month,
-                Year = year
+                Year = request.Year,
+                Photo = request.Photo
 
             }, cancellationToken);
 
@@ -56,7 +49,7 @@ namespace Birthday.PublicAPI.Controllers
 
             [Range(1900, 9999)]
             public int? Year { get; set; }
-            //public IFormFile Image { get; set; }
+            public IFormFile Photo { get; set; }
         }
     }
 }

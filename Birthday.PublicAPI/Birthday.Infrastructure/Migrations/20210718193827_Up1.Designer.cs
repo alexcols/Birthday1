@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Birthday.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20210718171507_up3")]
-    partial class up3
+    [Migration("20210718193827_Up1")]
+    partial class Up1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -73,10 +73,16 @@ namespace Birthday.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<int>("PhotoId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("SecondName")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PhotoId")
+                        .IsUnique();
 
                     b.ToTable("Birthdays");
                 });
@@ -88,6 +94,17 @@ namespace Birthday.Infrastructure.Migrations
                         .HasForeignKey("PersonId");
 
                     b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("Birthday.Domain.Person", b =>
+                {
+                    b.HasOne("Birthday.Domain.Image", "Photo")
+                        .WithOne()
+                        .HasForeignKey("Birthday.Domain.Person", "PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Photo");
                 });
 #pragma warning restore 612, 618
         }

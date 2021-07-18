@@ -13,7 +13,10 @@ namespace Birthday.Domain
 
         //date for sort, default year is 0004(includes february, 29)
         public DateTime DateWithoutYear { get; set; }
-        //public Image Photo { get; set; }
+
+        public int PhotoId { get; set; }
+        
+        public Image Photo { get; set; }
 
     }
 }

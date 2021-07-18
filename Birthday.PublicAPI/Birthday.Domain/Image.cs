@@ -8,6 +8,7 @@ namespace Birthday.Domain
         public Guid FileGuid { get; set; }
         public string FileName { get; set; }
         public string FileType { get; set; }
+        //public int PersonId { get; set; }
         public Person Person { get; set; }
         public byte[] Content { get; set; }
     }

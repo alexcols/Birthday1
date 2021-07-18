@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Birthday.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20210718141039_up2")]
-    partial class up2
+    [Migration("20210718192820_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -60,7 +60,9 @@ namespace Birthday.Infrastructure.Migrations
             modelBuilder.Entity("Birthday.Domain.Person", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<DateTime?>("Date")
                         .HasColumnType("timestamp without time zone");
@@ -71,10 +73,16 @@ namespace Birthday.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<int>("PhotoId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("SecondName")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PhotoId")
+                        .IsUnique();
 
                     b.ToTable("Birthdays");
                 });
@@ -91,8 +99,8 @@ namespace Birthday.Infrastructure.Migrations
             modelBuilder.Entity("Birthday.Domain.Person", b =>
                 {
                     b.HasOne("Birthday.Domain.Image", "Photo")
-                        .WithMany()
-                        .HasForeignKey("Id")
+                        .WithOne()
+                        .HasForeignKey("Birthday.Domain.Person", "PhotoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
