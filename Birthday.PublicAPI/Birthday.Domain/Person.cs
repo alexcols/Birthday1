@@ -11,9 +11,9 @@ namespace Birthday.Domain
         //date will be nullable, if year is empty
         public DateTime? Date { get; set; } = null;
 
-        //date for sort, default year is 0001
+        //date for sort, default year is 0004(includes february, 29)
         public DateTime DateWithoutYear { get; set; }
-        public Image Photo { get; set; }
+        //public Image Photo { get; set; }
 
     }
 }

@@ -13,20 +13,12 @@ namespace Birthday.PublicAPI.Controllers
     {
         // POST: BirthdayController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> Create(
             [FromForm] BithdayCreateRequest request,
             CancellationToken cancellationToken)
         {
-            int year;
-            if (request.Year == null)
-            {
-                year = 1;
-            }
-            else
-            {
-                year = (int)request.Year;
-            }
+            
 
             var response = await _birthdayService.Create(new CreateBirthday.Request
             {
@@ -34,7 +26,7 @@ namespace Birthday.PublicAPI.Controllers
                 SecondName = request.SecondName,
                 Day = request.Day,
                 Month = request.Month,
-                Year = year
+                Year = request.Year
 
             }, cancellationToken);
 

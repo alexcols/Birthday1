@@ -1,16 +1,17 @@
+using Birthday.Application;
+using Birthday.Application.implementation;
+using Birthday.Application.repositories;
+using Birthday.Domain;
+using Birthday.Infrastructure;
+using Birthday.Infrastructure.DataAccess;
+using Birthday.Infrastructure.DataAccess.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Birthday.PublicAPI
 {
@@ -26,8 +27,12 @@ namespace Birthday.PublicAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddScoped<IBirthdayService, BirthdayService>();
+                               
             services.AddControllers();
+
+            services.AddDataAccessModule(configuration => configuration.InPostgress(Configuration.GetConnectionString("PostgresDb")));
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Birthday.PublicAPI", Version = "v1" });
@@ -37,6 +42,11 @@ namespace Birthday.PublicAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //Init migrations
+            using var scope = app.ApplicationServices.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+            db.Database.Migrate();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

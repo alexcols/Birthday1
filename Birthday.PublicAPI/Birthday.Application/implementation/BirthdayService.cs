@@ -1,19 +1,23 @@
 ﻿using Advertisement.Domain.Shared.Exceptions;
 using Birthday.Application.contracts;
 using Birthday.Application.interfaces;
+using Birthday.Application.repositories;
+using Birthday.Domain;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Birthday.Application.implementation
 {
-    class BirthdayService : IBirthdayService
+    public class BirthdayService : IBirthdayService
     {
         private readonly IBirthdayRepository _birthdayRepository;
+        private readonly IRepository<Person, int> _repository;
 
-        public BirthdayService(IBirthdayRepository birthdayRepository)
+        public BirthdayService(IBirthdayRepository birthdayRepository, IRepository<Person, int> repository)
         {
             _birthdayRepository = birthdayRepository;
+            _repository = repository;
         }
 
         public async Task<CreateBirthday.Response> Create(CreateBirthday.Request request, CancellationToken cancellationToken)
@@ -49,7 +53,7 @@ namespace Birthday.Application.implementation
                 Date = date
             };
 
-            await _birthdayRepository.Save(birthday, cancellationToken);
+            await _repository.Save(birthday, cancellationToken);
 
             return new CreateBirthday.Response
             {

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Birthday.Application.interfaces
 {
-    public interface IBirthdayRepository:IRepository<Person,int>
+    public interface IBirthdayRepository:IRepository<Person, int>
     {
 
     }
