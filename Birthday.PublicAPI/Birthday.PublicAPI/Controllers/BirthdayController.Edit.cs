@@ -13,8 +13,7 @@ namespace Birthday.PublicAPI.Controllers
     public partial class BirthdayController
     {
         // PUT: BirthdayController/Edit/5
-        [HttpPut]
-        [ValidateAntiForgeryToken]
+        [HttpPut]        
         public async Task<ActionResult> Edit(
             [FromForm] BirthdayEditRequest request, 
             CancellationToken cancellationToken)

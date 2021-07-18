@@ -4,7 +4,9 @@ using Birthday.Application.contracts.Exceptions;
 using Birthday.Application.interfaces;
 using Birthday.Application.repositories;
 using Birthday.Domain;
+using Microsoft.AspNetCore.Http;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,36 +26,38 @@ namespace Birthday.Application.implementation
         public async Task<CreateBirthday.Response> Create(CreateBirthday.Request request, CancellationToken cancellationToken)
         {
 
-            //string dateStringWithoutYear;
-            //string dateString;
-
-            //dateStringWithoutYear =request.Day.ToString() + "." + request.Month.ToString()+".0004";
-            //dateString = request.Day.ToString() + "." + request.Month.ToString() +"."+ request.Year.ToString();
-
-            //DateTime dateWithoutYear = CheckDate(dateStringWithoutYear);
-            //DateTime? date;
-
-
-
-            //if (request.Year == null || request.Year == 0)
-            //{
-            //    date = null;
-            //}
-            //else
-            //{
-            //    date = CheckDate(dateString);
-            //}
+          
             DateTime dateWithoutYear = CheckDates(request.Day, request.Month, request.Year, out DateTime? date);
-
-
-            var birthday = new Domain.Person
+            Person birthday = new Domain.Person
             {
                 Name = request.Name,
                 SecondName = request.SecondName,
                 DateWithoutYear = dateWithoutYear,
                 Date = date
-            };
+            }; 
 
+            // Add Photo to bite's array
+            if (request.Photo != null && request.Photo.Length > 0)
+            {
+                try
+                {
+                    await using (var target = new MemoryStream())
+                    {
+                        request.Photo.CopyTo(target);
+
+                        birthday.PhotoName = Path.GetFileName(request.Photo.FileName);
+                        birthday.PhotoType = Path.GetExtension(birthday.PhotoName);
+                        birthday.PhotoGuid = Guid.NewGuid();
+                        birthday.PhotoContent = target.ToArray();
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Console.Write(e.Message);
+                }
+            }
+            
             await _repository.Save(birthday, cancellationToken);
 
             return new CreateBirthday.Response
@@ -85,17 +89,36 @@ namespace Birthday.Application.implementation
 
             DateTime dateWithoutYear = CheckDates(request.Day, request.Month, request.Year, out DateTime? date);
 
-            await _repository.Save(new Person
-            {
-                Id = birthday.Id,
-                Name = request.Name,
-                SecondName = request.SecondName,
-                Date = date,
-                DateWithoutYear = dateWithoutYear,
-                PhotoId = birthday.PhotoId
 
+            birthday.Name = request.Name;
+            birthday.SecondName = request.SecondName;
+            birthday.Date = date;
+            birthday.DateWithoutYear = dateWithoutYear;
+              
+
+            // Add Photo to bite's array
+            if (request.Photo != null && request.Photo.Length > 0)
+            {
+                try
+                {
+                    await using (var target = new MemoryStream())
+                    {
+                        request.Photo.CopyTo(target);
+
+                        birthday.PhotoName = Path.GetFileName(request.Photo.FileName);
+                        birthday.PhotoType = Path.GetExtension(birthday.PhotoName);
+                        birthday.PhotoGuid = Guid.NewGuid();
+                        birthday.PhotoContent = target.ToArray();
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Console.Write(e.Message);
+                }
             }
-                , cancellationToken);
+
+            await _repository.Save(birthday, cancellationToken);
         }
 
         public Task<GetPagedBirthday.Response> GetPaged(GetPagedBirthday.Request request, CancellationToken cancellationToken)
@@ -117,6 +140,7 @@ namespace Birthday.Application.implementation
             return dateTime;
         }
 
+        //Checking dates
         private DateTime CheckDates(int day, int month, int? year, out DateTime? date)
         {
             string dateStringWithoutYear = day.ToString() + "." + month.ToString() + ".0004";
@@ -124,7 +148,7 @@ namespace Birthday.Application.implementation
 
             DateTime dateWithoutYear;
 
-            bool parse1 = DateTime.TryParse(dateString, out dateWithoutYear);
+            bool parse1 = DateTime.TryParse(dateStringWithoutYear, out dateWithoutYear);
 
             if (!parse1)
             {
@@ -138,7 +162,7 @@ namespace Birthday.Application.implementation
             else
             {
                 DateTime dateParse;
-                bool parse = DateTime.TryParse(dateStringWithoutYear, out dateParse);
+                bool parse = DateTime.TryParse(dateString, out dateParse);
 
                 if (!parse)
                 {
@@ -149,5 +173,6 @@ namespace Birthday.Application.implementation
 
             return dateWithoutYear;
         }
+
     }
 }

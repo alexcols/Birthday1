@@ -1,5 +1,7 @@
 ﻿
 
+using Microsoft.AspNetCore.Http;
+
 namespace Birthday.Application.contracts
 {
     public static class CreateBirthday
@@ -11,6 +13,7 @@ namespace Birthday.Application.contracts
             public int Day { get; set; }
             public int Month { get; set; }
             public int? Year { get; set; }
+            public IFormFile Photo { get; set; }
         }
 
         public sealed class Response

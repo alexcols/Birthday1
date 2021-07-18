@@ -3,15 +3,17 @@ using System;
 using Birthday.Infrastructure.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Birthday.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210718211741_Up2")]
+    partial class Up2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,17 +38,20 @@ namespace Birthday.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<byte[]>("PhotoContent")
+                        .IsRequired()
                         .HasColumnType("bytea");
 
                     b.Property<Guid>("PhotoGuid")
                         .HasColumnType("uuid");
 
                     b.Property<string>("PhotoName")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .IsUnicode(true)
                         .HasColumnType("character varying(100)");
 
                     b.Property<string>("PhotoType")
+                        .IsRequired()
                         .HasMaxLength(10)
                         .IsUnicode(true)
                         .HasColumnType("character varying(10)");

@@ -1,4 +1,5 @@
 ﻿using Birthday.Application.contracts;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,8 @@ namespace Birthday.PublicAPI.Controllers
                 SecondName = request.SecondName,
                 Day = request.Day,
                 Month = request.Month,
-                Year = request.Year
+                Year = request.Year,
+                Photo = request.Image
 
             }, cancellationToken);
 
@@ -46,7 +48,7 @@ namespace Birthday.PublicAPI.Controllers
             
             [Range(1900, 9999)]
             public int? Year { get; set; }
-            //public IFormFile Image { get; set; }
+            public IFormFile Image { get; set; }
         }
 
 

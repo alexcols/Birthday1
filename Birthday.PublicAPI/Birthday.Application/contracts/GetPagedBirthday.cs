@@ -20,7 +20,7 @@ namespace Birthday.Application.contracts
             public string SecondName { get; set; }
             public DateTime DateWithoutYear { get; set; }
             public int Age { get; set; }
-            public Image Photo { get; set; }
+            //public Image Photo { get; set; }
         }
 
     }
