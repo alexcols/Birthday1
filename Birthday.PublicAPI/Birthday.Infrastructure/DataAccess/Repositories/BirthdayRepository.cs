@@ -1,5 +1,7 @@
 ﻿using Birthday.Application.interfaces;
+using Birthday.Application.repositories;
 using Birthday.Domain;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,36 +12,41 @@ using System.Threading.Tasks;
 
 namespace Birthday.Infrastructure.DataAccess.Repositories
 {
-    public class BirthdayRepository : IBirthdayRepository
+    public class BirthdayRepository : Repository<Person, int>, IBirthdayRepository
     {
-        public Task<int> Count(CancellationToken cancellationToken)
+       
+        private readonly DatabaseContext _dbContext;
+
+        public BirthdayRepository(DatabaseContext dbContext):base(dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
         }
 
-        public Task<Person> FindById(int id, CancellationToken cancellationToken)
+        public async Task<List<Person>> GetPagedBirthdays(Expression<Func<Person, bool>> predicate, int limit, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            
+            
+            return await _dbContext
+               .Set<Person>()
+               .Where(predicate)
+               .OrderBy(e => e.DateWithoutYear)
+               .Take(limit)              
+               .ToListAsync(cancellationToken);
         }
 
-        public Task<Person> FindWhere(Expression<Func<Person, bool>> predicate, CancellationToken cancellationToken)
+     
+
+        public async Task<IEnumerable<Person>> GetPagedByName(int offset, int limit, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _dbContext
+                .Set<Person>()
+                .OrderBy(e => e.Name)
+                .Skip(offset)
+                .Take(limit)
+
+                .ToListAsync(cancellationToken);
         }
 
-        public Task<IEnumerable<Person>> GetPaged(int offset, int limit, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Remove(Person entity, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Save(Person entity, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

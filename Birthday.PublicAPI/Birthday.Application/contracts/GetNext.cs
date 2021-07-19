@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 
 namespace Birthday.Application.contracts
 {
-    public static class GetPagedBirthday
+    public static class GetNext
     {
-        public sealed class Request : Paged.Request
-        {          
-        }
-        public sealed class Response: Paged.Response<Response.BirthdayResponse>
+        public sealed class Request
         {
-            public sealed class BirthdayResponse
+            public int Limit { get; set; } = 5;
+        }
+        public sealed class Response : Paged.Response<Response.BirthdayNextResponse>
+
+        {
+            public sealed class BirthdayNextResponse
             {
 
                 public int Id { get; set; }

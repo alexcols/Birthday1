@@ -7,6 +7,7 @@ using Birthday.Domain;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,8 +26,7 @@ namespace Birthday.Application.implementation
 
         public async Task<CreateBirthday.Response> Create(CreateBirthday.Request request, CancellationToken cancellationToken)
         {
-
-          
+            //todo: checking for repeat name
             DateTime dateWithoutYear = CheckDates(request.Day, request.Month, request.Year, out DateTime? date);
             Person birthday = new Domain.Person
             {
@@ -34,7 +34,7 @@ namespace Birthday.Application.implementation
                 SecondName = request.SecondName,
                 DateWithoutYear = dateWithoutYear,
                 Date = date
-            }; 
+            };
 
             // Add Photo to bite's array
             if (request.Photo != null && request.Photo.Length > 0)
@@ -57,7 +57,7 @@ namespace Birthday.Application.implementation
                     Console.Write(e.Message);
                 }
             }
-            
+
             await _repository.Save(birthday, cancellationToken);
 
             return new CreateBirthday.Response
@@ -94,7 +94,7 @@ namespace Birthday.Application.implementation
             birthday.SecondName = request.SecondName;
             birthday.Date = date;
             birthday.DateWithoutYear = dateWithoutYear;
-              
+
 
             // Add Photo to bite's array
             if (request.Photo != null && request.Photo.Length > 0)
@@ -121,23 +121,151 @@ namespace Birthday.Application.implementation
             await _repository.Save(birthday, cancellationToken);
         }
 
-        public Task<GetPagedBirthday.Response> GetPaged(GetPagedBirthday.Request request, CancellationToken cancellationToken)
+        public async Task<GetById.Response> GetById(GetById.Request request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var birthday = await _repository.FindById(request.Id, cancellationToken);
+            if (birthday == null)
+            {
+                throw new NoBithdayFoundException(request.Id);
+            }
+            int day = birthday.DateWithoutYear.Day;
+            int month = birthday.DateWithoutYear.Month;
+            //int? age = null;
+            //if (birthday.Date != null)
+            //{
+            //    DateTime bday = (DateTime)birthday.Date;
+            //    int ageA = DateTime.UtcNow.Year - bday.Year;
+            //    if (bday > DateTime.UtcNow.AddYears(-ageA)) ageA--;
+            //    age = ageA;
+            //}
+
+
+            var birth = new GetById.Response
+            {
+                Id = birthday.Id,
+                Name = birthday.Name,
+                SecondName = birthday.SecondName,
+                Day = day,
+                Month = month,
+                Age = FindAge(birthday.Date),
+                PhotoGuid = birthday.PhotoGuid,
+                PhotoName = birthday.PhotoName,
+                PhotoType = birthday.PhotoType,
+                PhotoContent = birthday.PhotoContent
+            };
+            //if (age!=null)
+            //{
+            //    birth.Age = age;
+            //}
+
+            return birth;
+
         }
 
-        //Checking date 
-        private DateTime CheckDate(string date)
+        public async Task<GetNext.Response> GetNext(GetNext.Request request, CancellationToken cancellationToken)
         {
-            DateTime dateTime;
-            bool parse = DateTime.TryParse(date, out dateTime);
-            if (!parse)
+            var parse = DateTime.TryParse("01.01.0004", out var date1);
+
+            var days = DateTime.UtcNow.DayOfYear;
+
+            var today = date1.AddDays(DateTime.UtcNow.DayOfYear);
+            int total = await _repository.Count(cancellationToken);
+
+            //get all birtdays
+            var allBirthdays = await _repository.GetPaged(0, total, cancellationToken);
+
+            foreach (var item in allBirthdays)
             {
-                throw new ConflictException("Date is not exist");
+                if (item.DateWithoutYear < today)
+                {
+                    item.DateWithoutYear = item.DateWithoutYear.AddYears(1);
+                }
+            }
+            var birthdays = allBirthdays
+                 .Where(b => b.DateWithoutYear >= today)
+                 .OrderBy(b => b.DateWithoutYear)
+                 .Take(request.Limit)
+                 .ToList();
+
+
+            return new GetNext.Response
+            {
+                Items = birthdays.Select(birthday => new GetNext.Response.BirthdayNextResponse
+                {
+                    Id = birthday.Id,
+                    Name = birthday.Name,
+                    SecondName = birthday.SecondName,
+                    Day = birthday.DateWithoutYear.Day,
+                    Month = birthday.DateWithoutYear.Month,
+                    PhotoGuid = birthday.PhotoGuid.ToString(),
+                    PhotoName = birthday.PhotoName,
+                    PhotoType = birthday.PhotoType,
+                    PhotoContent = birthday.PhotoContent,
+                    Age=FindAge(birthday.Date)
+
+                }),
+                Total = total,
+                Limit = request.Limit
+
+            };
+
+
+
+        }
+
+        public async Task<GetPagedBirthday.Response> GetPaged(GetPagedBirthday.Request request, CancellationToken cancellationToken)
+        {
+            int total = await _repository.Count(cancellationToken);
+            if (total == 0)
+            {
+                return new GetPagedBirthday.Response
+                {
+                    Total = total,
+                    Offset = request.Offset,
+                    Limit = request.Limit,
+                    Items = Array.Empty<GetPagedBirthday.Response.BirthdayResponse>()
+                };
             }
 
+            var birthdays = await _birthdayRepository.GetPagedByName(request.Offset, request.Limit, cancellationToken);
 
-            return dateTime;
+            return new GetPagedBirthday.Response
+            {
+                Items = birthdays.Select(birthday => new GetPagedBirthday.Response.BirthdayResponse
+                {
+                    Id = birthday.Id,
+                    Name = birthday.Name,
+                    SecondName = birthday.SecondName,
+                    Day = birthday.DateWithoutYear.Day,
+                    Month = birthday.DateWithoutYear.Month,
+                    PhotoGuid = birthday.PhotoGuid.ToString(),
+                    PhotoName = birthday.PhotoName,
+                    PhotoType = birthday.PhotoType,
+                    PhotoContent = birthday.PhotoContent,
+                    Age=FindAge(birthday.Date)
+
+                }),
+                Total = total,
+                Offset = request.Offset,
+                Limit = request.Limit
+
+            };
+
+
+        }
+
+        // finding age
+        private int? FindAge(DateTime? date)
+        {
+            int? age = null;
+            if (date != null)
+            {
+                DateTime bday = (DateTime)date;
+                int ageA = DateTime.UtcNow.Year - bday.Year;
+                if (bday > DateTime.UtcNow.AddYears(-ageA)) ageA--;
+                age = ageA;
+            }
+            return age;
         }
 
         //Checking dates

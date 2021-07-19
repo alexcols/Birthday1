@@ -11,6 +11,8 @@ namespace Birthday.Application
         Task Edit(EditBirthday.Request request, CancellationToken cancellationToken);
         Task Delete(DeleteBirthday.Request request, CancellationToken cancellationToken);
         Task<GetPagedBirthday.Response> GetPaged(GetPagedBirthday.Request request, CancellationToken cancellationToken);
+        Task<GetById.Response> GetById(GetById.Request request, CancellationToken cancellationToken);
+        Task<GetNext.Response> GetNext(GetNext.Request request, CancellationToken cancellationToken);
 
     }
 }

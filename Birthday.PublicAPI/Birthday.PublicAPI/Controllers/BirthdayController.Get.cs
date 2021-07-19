@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,10 +11,23 @@ namespace Birthday.PublicAPI.Controllers
 {
     public partial class BirthdayController
     {
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(GetById.Response), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> Get(
+            [FromRoute] int id, 
+            CancellationToken cancellationToken)
+        {
+            return Ok(await _birthdayService.GetById(new GetById.Request
+            {
+            Id=id
+            }, cancellationToken));
+
+        }        
+        
         
         [HttpGet]
         public async Task<IActionResult> GetPaged(
-            [FromForm] GetPagedRequest request,
+            [FromQuery] GetPagedRequest request,
             CancellationToken cancellationToken
             )
         {
@@ -23,6 +37,19 @@ namespace Birthday.PublicAPI.Controllers
                 Offset = request.Offset
             }, cancellationToken));
         }
+
+        [HttpGet("next/")]
+        //[ProducesResponseType(typeof(GetPagedBirthday.Response), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetNext(
+            [FromQuery] int limit,
+            CancellationToken cancellationToken)
+        {
+            return Ok(await _birthdayService.GetNext(new GetNext.Request
+            {
+                Limit = limit             
+            }, cancellationToken));
+        }
+
         public sealed class GetPagedRequest
         {
            
@@ -37,5 +64,7 @@ namespace Birthday.PublicAPI.Controllers
 
 
         }
+
+     
     }
 }
