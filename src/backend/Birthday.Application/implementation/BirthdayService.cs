@@ -32,8 +32,8 @@ namespace Birthday.Application.implementation
             {
                 Name = request.Name,
                 SecondName = request.SecondName,
-                DateWithoutYear = dateWithoutYear,
-                Date = date
+                DateWithoutYear = request.Birthday,
+                Date = request.Birthday
             };
 
             // Add Photo to bite's array
@@ -178,7 +178,7 @@ namespace Birthday.Application.implementation
             {
                 if (item.DateWithoutYear < today)
                 {
-                    item.DateWithoutYear = item.DateWithoutYear.AddYears(1);
+                    item.DateWithoutYear = item.DateWithoutYear.AddYears(4);
                 }
             }
             var birthdays = allBirthdays

@@ -1,6 +1,7 @@
 ﻿
 
 using Microsoft.AspNetCore.Http;
+using System;
 
 namespace Birthday.Application.contracts
 {
@@ -10,6 +11,7 @@ namespace Birthday.Application.contracts
         {
             public string Name { get; set; }
             public string SecondName { get; set; }
+            public DateTime Birthday { get; set; }
             public int Day { get; set; }
             public int Month { get; set; }
             public int? Year { get; set; }
