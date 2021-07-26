@@ -1,4 +1,5 @@
 ﻿using Birthday.Application.contracts;
+using Birthday.PublicAPI.Controllers.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -22,7 +23,7 @@ namespace Birthday.PublicAPI.Controllers
             var parse = DateTime.TryParse(request.Birthday, out DateTime bday);
             if (!parse)
             {
-                throw new Exception("Date is not correct");
+                throw new InvalidDateFormatException(); ;
             }
 
             await _birthdayService.Edit(new EditBirthday.Request

@@ -1,4 +1,4 @@
-﻿namespace Advertisement.Domain.Shared.Exceptions
+﻿namespace Birthday.Domain.Shared.Exceptions
 {
     public abstract class NotFoundException : DomainException
     {

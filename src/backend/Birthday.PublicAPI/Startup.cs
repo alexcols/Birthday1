@@ -5,6 +5,7 @@ using Birthday.Domain;
 using Birthday.Infrastructure;
 using Birthday.Infrastructure.DataAccess;
 using Birthday.Infrastructure.DataAccess.Repositories;
+using Birthday.PublicAPI.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -47,12 +48,13 @@ namespace Birthday.PublicAPI
             var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
             db.Database.Migrate();
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
+            //if (env.IsDevelopment())
+            //{
+                //app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Birthday.PublicAPI v1"));
-            }
+            //}
+            app.UseApplicationException();
 
             app.UseHttpsRedirection();
 

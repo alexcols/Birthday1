@@ -38,10 +38,7 @@ namespace Birthday.Infrastructure.DataAccess
 
                 builder.Property(i => i.PhotoContent);
 
-
-                //builder.Property(p => p.PhotoId);
-                //builder.HasOne(p => p.Photo)
-                //   .WithOne();
+                              
 
 
             });
@@ -60,9 +57,7 @@ namespace Birthday.Infrastructure.DataAccess
 
             //    builder.Property(i => i.Content).IsRequired();
 
-            //    //builder.HasOne(i => i.Person)
-            //    //    .WithOne()
-            //    //   ;
+            
 
             //});
 

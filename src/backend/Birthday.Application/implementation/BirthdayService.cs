@@ -1,10 +1,9 @@
-﻿using Advertisement.Domain.Shared.Exceptions;
-using Birthday.Application.contracts;
+﻿using Birthday.Application.contracts;
 using Birthday.Application.contracts.Exceptions;
 using Birthday.Application.interfaces;
 using Birthday.Application.repositories;
 using Birthday.Domain;
-using Microsoft.AspNetCore.Http;
+using Birthday.Domain.Shared.Exceptions;
 using System;
 using System.IO;
 using System.Linq;
@@ -27,11 +26,11 @@ namespace Birthday.Application.implementation
         public async Task<CreateBirthday.Response> Create(CreateBirthday.Request request, CancellationToken cancellationToken)
         {
 
-            //DateTime dateWithoutYear = CheckDates(request.Day, request.Month, request.Year, out DateTime? date);
+            //for sorting
             var dateWithoutYear = request.Birthday.AddYears(-request.Birthday.Year+4);
 
 
-            Person birthday = new Domain.Person
+            Person birthday = new Person
             {
                 Name = request.Name,
                 SecondName = request.SecondName,
@@ -152,10 +151,9 @@ namespace Birthday.Application.implementation
         {
            // date  01.01.0004 for start sorting
             var parse = DateTime.TryParse("01.01.0004", out var date1);
-
-            var days = DateTime.UtcNow.DayOfYear;
-
+            // the same date in 0004 for sorting
             var today = date1.AddDays(DateTime.UtcNow.DayOfYear);
+            
             int total = await _repository.Count(cancellationToken);
 
             //the first time try to get Birthdays before NY

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Advertisement.Domain.Shared.Exceptions
+namespace Birthday.Domain.Shared.Exceptions
 {
     public abstract class DomainException : ApplicationException
     {

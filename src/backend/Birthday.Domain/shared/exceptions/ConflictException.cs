@@ -1,4 +1,5 @@
-﻿namespace Advertisement.Domain.Shared.Exceptions
+﻿
+namespace Birthday.Domain.Shared.Exceptions
 {
     public class ConflictException : DomainException
     {

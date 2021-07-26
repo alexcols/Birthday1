@@ -1,9 +1,4 @@
-﻿using Birthday.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Birthday.Application.contracts
 {
@@ -19,8 +14,8 @@ namespace Birthday.Application.contracts
             public string Name { get; set; }
             public string SecondName { get; set; }
             public DateTime Date{ get; set; }
-            public int Day { get; set; }
-            public int Month { get; set; }
+            //public int Day { get; set; }
+            //public int Month { get; set; }
             public int? Age { get; set; }
 
             public Guid PhotoGuid { get; set; }
