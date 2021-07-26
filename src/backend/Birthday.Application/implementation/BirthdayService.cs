@@ -26,13 +26,16 @@ namespace Birthday.Application.implementation
 
         public async Task<CreateBirthday.Response> Create(CreateBirthday.Request request, CancellationToken cancellationToken)
         {
-            //todo: checking for repeat name
-            DateTime dateWithoutYear = CheckDates(request.Day, request.Month, request.Year, out DateTime? date);
+
+            //DateTime dateWithoutYear = CheckDates(request.Day, request.Month, request.Year, out DateTime? date);
+            var dateWithoutYear = request.Birthday.AddYears(-request.Birthday.Year+4);
+
+
             Person birthday = new Domain.Person
             {
                 Name = request.Name,
                 SecondName = request.SecondName,
-                DateWithoutYear = request.Birthday,
+                DateWithoutYear = dateWithoutYear,
                 Date = request.Birthday
             };
 
@@ -87,12 +90,11 @@ namespace Birthday.Application.implementation
                 throw new NoBithdayFoundException(request.Id);
             }
 
-            DateTime dateWithoutYear = CheckDates(request.Day, request.Month, request.Year, out DateTime? date);
-
+            var dateWithoutYear = request.Birthday.AddYears(-request.Birthday.Year + 4);
 
             birthday.Name = request.Name;
             birthday.SecondName = request.SecondName;
-            birthday.Date = date;
+            birthday.Date = request.Birthday;
             birthday.DateWithoutYear = dateWithoutYear;
 
 
@@ -128,35 +130,19 @@ namespace Birthday.Application.implementation
             {
                 throw new NoBithdayFoundException(request.Id);
             }
-            int day = birthday.DateWithoutYear.Day;
-            int month = birthday.DateWithoutYear.Month;
-            //int? age = null;
-            //if (birthday.Date != null)
-            //{
-            //    DateTime bday = (DateTime)birthday.Date;
-            //    int ageA = DateTime.UtcNow.Year - bday.Year;
-            //    if (bday > DateTime.UtcNow.AddYears(-ageA)) ageA--;
-            //    age = ageA;
-            //}
-
-
+          
             var birth = new GetById.Response
             {
                 Id = birthday.Id,
                 Name = birthday.Name,
                 SecondName = birthday.SecondName,
-                Day = day,
-                Month = month,
+                Date = birthday.Date,
                 Age = FindAge(birthday.Date),
                 PhotoGuid = birthday.PhotoGuid,
                 PhotoName = birthday.PhotoName,
                 PhotoType = birthday.PhotoType,
                 PhotoContent = birthday.PhotoContent
-            };
-            //if (age!=null)
-            //{
-            //    birth.Age = age;
-            //}
+            };            
 
             return birth;
 
@@ -164,6 +150,7 @@ namespace Birthday.Application.implementation
 
         public async Task<GetNext.Response> GetNext(GetNext.Request request, CancellationToken cancellationToken)
         {
+           // date  01.01.0004 for start sorting
             var parse = DateTime.TryParse("01.01.0004", out var date1);
 
             var days = DateTime.UtcNow.DayOfYear;
@@ -171,37 +158,52 @@ namespace Birthday.Application.implementation
             var today = date1.AddDays(DateTime.UtcNow.DayOfYear);
             int total = await _repository.Count(cancellationToken);
 
-            //get all birtdays
-            var allBirthdays = await _repository.GetPaged(0, total, cancellationToken);
+            //the first time try to get Birthdays before NY
+            var nextBirthdays1 = await _birthdayRepository.GetPagedBirthdays(
+                p=>(p.DateWithoutYear >= today),
+                request.Limit, cancellationToken);
 
-            foreach (var item in allBirthdays)
+            //if number of Birthdays less than limit, for exemple: today december,31
+            var count = nextBirthdays1.Count;
+
+            if (count < request.Limit && count < total)
             {
-                if (item.DateWithoutYear < today)
-                {
-                    item.DateWithoutYear = item.DateWithoutYear.AddYears(4);
-                }
+                var nextBirthdays2 = await _birthdayRepository.GetPagedBirthdays(
+                p => (p.DateWithoutYear >= date1 && p.DateWithoutYear < today),
+                request.Limit-count, cancellationToken);
+                nextBirthdays1.AddRange(nextBirthdays2);
             }
-            var birthdays = allBirthdays
-                 .Where(b => b.DateWithoutYear >= today)
-                 .OrderBy(b => b.DateWithoutYear)
-                 .Take(request.Limit)
-                 .ToList();
+
+            //get all birtdays
+            //var allBirthdays = await _repository.GetPaged(0, total, cancellationToken);
+
+            //foreach (var item in allBirthdays)
+            //{
+            //    if (item.DateWithoutYear < today)
+            //    {
+            //        item.DateWithoutYear = item.DateWithoutYear.AddYears(4);
+            //    }
+            //}
+            //var birthdays = allBirthdays
+            //     .Where(b => b.DateWithoutYear >= today)
+            //     .OrderBy(b => b.DateWithoutYear)
+            //     .Take(request.Limit)
+            //     .ToList();
 
 
             return new GetNext.Response
             {
-                Items = birthdays.Select(birthday => new GetNext.Response.BirthdayNextResponse
+                Items = nextBirthdays1.Select(birthday => new GetNext.Response.BirthdayNextResponse
                 {
                     Id = birthday.Id,
                     Name = birthday.Name,
                     SecondName = birthday.SecondName,
-                    Day = birthday.DateWithoutYear.Day,
-                    Month = birthday.DateWithoutYear.Month,
+                    Date = birthday.Date,
                     PhotoGuid = birthday.PhotoGuid.ToString(),
                     PhotoName = birthday.PhotoName,
                     PhotoType = birthday.PhotoType,
                     PhotoContent = birthday.PhotoContent,
-                    Age=FindAge(birthday.Date)
+                    Age= FindAge(birthday.Date)
 
                 }),
                 Total = total,
@@ -236,8 +238,7 @@ namespace Birthday.Application.implementation
                     Id = birthday.Id,
                     Name = birthday.Name,
                     SecondName = birthday.SecondName,
-                    Day = birthday.DateWithoutYear.Day,
-                    Month = birthday.DateWithoutYear.Month,
+                    Date = birthday.Date,                    
                     PhotoGuid = birthday.PhotoGuid.ToString(),
                     PhotoName = birthday.PhotoName,
                     PhotoType = birthday.PhotoType,
@@ -268,7 +269,7 @@ namespace Birthday.Application.implementation
             return age;
         }
 
-        //Checking dates
+        //Checking dates - now do not use
         private DateTime CheckDates(int day, int month, int? year, out DateTime? date)
         {
             string dateStringWithoutYear = day.ToString() + "." + month.ToString() + ".0004";

@@ -22,10 +22,9 @@ namespace Birthday.Application.contracts
                 public int Id { get; set; }
                 public string Name { get; set; }
                 public string SecondName { get; set; }
-                //public DateTime DateWithoutYear { get; set; }
-                public int Day { get; set; }
-                public int Month { get; set; }
+                public DateTime Date{ get; set; }
                 public int? Age { get; set; }
+                
 
                 public string PhotoGuid { get; set; }
                 public string PhotoName { get; set; }

@@ -8,8 +8,8 @@ namespace Birthday.Domain
         public string Name { get; set; }
         public string SecondName { get; set; }
 
-        //date will be nullable, if year is empty
-        public DateTime? Date { get; set; } = null;
+        
+        public DateTime Date { get; set; }
 
         //date for sort, default year is 0004(includes february, 29)
         public DateTime DateWithoutYear { get; set; }

@@ -14,9 +14,8 @@ namespace Birthday.Application.contracts
             public int Id { get; set; }
             public string Name { get; set; }
             public string SecondName { get; set; }
-            public int Day { get; set; }
-            public int Month { get; set; }
-            public int? Year { get; set; }
+            public DateTime Birthday { get; set; }
+           
             public IFormFile Photo { get; set; }
         }
     }

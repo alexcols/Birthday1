@@ -34,7 +34,19 @@ namespace Birthday.Infrastructure.DataAccess.Repositories
                .ToListAsync(cancellationToken);
         }
 
-     
+        public async Task<List<Person>> GetBirthdaysOrderedByDate(int limit, int offset, CancellationToken cancellationToken)
+        {
+
+
+            return await _dbContext
+               .Set<Person>()               
+               .OrderBy(e => e.DateWithoutYear)
+               .Skip(offset)
+               .Take(limit)
+               .ToListAsync(cancellationToken);
+        }
+
+
 
         public async Task<IEnumerable<Person>> GetPagedByName(int offset, int limit, CancellationToken cancellationToken)
         {

@@ -13,21 +13,25 @@ namespace Birthday.PublicAPI.Controllers
     public partial class BirthdayController
     {
         // PUT: BirthdayController/Edit/5
-        [HttpPut]        
+        [HttpPut]
         public async Task<ActionResult> Edit(
-            [FromForm] BirthdayEditRequest request, 
+            [FromForm] BirthdayEditRequest request,
             CancellationToken cancellationToken)
         {
-         
+
+            var parse = DateTime.TryParse(request.Birthday, out DateTime bday);
+            if (!parse)
+            {
+                throw new Exception("Date is not correct");
+            }
+
             await _birthdayService.Edit(new EditBirthday.Request
             {
                 Id = request.Id,
                 Name = request.Name,
                 SecondName = request.SecondName,
-                Day = request.Day,
-                Month = request.Month,
-                Year = request.Year,
-                Photo = request.Photo
+                Birthday = bday,
+                Photo = request.Image
 
             }, cancellationToken);
 
@@ -41,14 +45,8 @@ namespace Birthday.PublicAPI.Controllers
             public string Name { get; set; }
             [MinLength(2), MaxLength(25)]
             public string SecondName { get; set; }
-            [Required, Range(1, 31)]
-            public int Day { get; set; }
-            [Required, Range(1, 12)]
-            public int Month { get; set; }
-
-            [Range(1900, 9999)]
-            public int? Year { get; set; }
-            public IFormFile Photo { get; set; }
+            public string Birthday { get; set; }
+            public IFormFile Image { get; set; }
         }
     }
 }

@@ -14,7 +14,9 @@ namespace Birthday.Application.interfaces
     public interface IBirthdayRepository:IRepository<Person, int>
     {
         Task<List<Person>> GetPagedBirthdays(Expression<Func<Person, bool>> predicate, int limit, CancellationToken cancellationToken);
+        Task<List<Person>> GetBirthdaysOrderedByDate(int limit, int offset, CancellationToken cancellationToken);
         Task<IEnumerable<Person>> GetPagedByName(int offset, int limit, CancellationToken cancellationToken);
-        
+
+
     }
 }
