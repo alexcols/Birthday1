@@ -4,13 +4,12 @@
 
 - Добавление миграции
 
-dotnet ef migrations add AddFields --project ../src/backend/Advertisement.Infrastructure/Advertisement.Infrastructure.csproj  --startup-project ../src/backend/Advertisement.PublicApi/Advertisement.PublicApi.csproj
-Build started...
+dotnet ef migrations add UpX --project ../src/backend/Birthday.Infrastructure/Birthday.Infrastructure.csproj  --startup-project ../src/backend/Birthday.PublicApi/Birthday.PublicApi.csproj
+dotnet ef  migrations add UpX --project .\src\backend\Birthday.Infrastructure\Birthday.Infrastructure.csproj --startup-project .\src\backend\Birthday.PublicAPI\Birthday.PublicAPI.csproj
 
 - Обновление БД
 
-dotnet ef database update --project ./src/backend/Advertisement.Infrastructure/Advertisement.Infrastructure.csproj  --startup-project ./src/backend/Advertisement.PublicApi/Advertisement.
-PublicApi.csproj
+dotnet ef database update --project ./src/backend/Birthday.Infrastructure/Birthday.Infrastructure.csproj  --startup-project ./src/backend/Birthday.PublicApi/Birthday.PublicApi.csproj
 
 
 ## Развертывание БД в *docker*-контейнере
