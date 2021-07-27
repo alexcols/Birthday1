@@ -1,27 +1,6 @@
 version: "3.7"
 
-services:
-
-  #ui:
-  #  build:
-  #    context: .
-  #    dockerfile: src/frontend/Dockerfile
-  #  ports:
-  #    - 4200:80
-  #  restart: on-failure
-  #  depends_on:
-  #    - "api"
-
-  #api:
-  #  build:
-  #    context: .
-  #    dockerfile: src/backend/Advertisement.PublicApi/Dockerfile
-  #  ports:
-  #    - 80:80
-  #  environment:
-  #    - ConnectionStrings__PostgresDb=Server=postgres;Database=Advertisement;Username=ad_user;Password=password123;Port=5432
-  #  depends_on:
-  #    - "postgres"
+services: 
 
   postgres:
     image: "postgres" # use latest official postgres version
