@@ -81,7 +81,7 @@ namespace Birthday.PublicAPI.Controllers
 
         public sealed class FindByNameRequest
         {
-            [Required, MinLength(3)]
+            [Required, MinLength(2)]
             public string SearchName { get; set; }
             public int Limit { get; set; } = 100;
             public int Offset { get; set; } = 0;
