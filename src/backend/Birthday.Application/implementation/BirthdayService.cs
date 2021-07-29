@@ -227,7 +227,7 @@ namespace Birthday.Application.implementation
                 };
             }
 
-            var birthdays = await _birthdayRepository.GetPagedByName(request.Offset, request.Limit, cancellationToken);
+            var birthdays = await _birthdayRepository.GetPagedSortByName(request.Offset, request.Limit, cancellationToken);
 
             return new GetPagedBirthday.Response
             {
@@ -252,6 +252,34 @@ namespace Birthday.Application.implementation
 
 
         }
+
+        public async Task<FindByName.Response> FindByName(FindByName.Request request, CancellationToken cancellationToken)
+        {
+            var total = await _birthdayRepository.Count(p => p.Name.Contains(request.SearchName) || p.SecondName.Contains(request.SearchName), cancellationToken);
+            
+            var birthdays = await _birthdayRepository.FindByName(request.SearchName, request.Offset, request.Limit, cancellationToken);
+
+
+            return new FindByName.Response
+            {
+                Items = birthdays.Select(birthday => new FindByName.Response.BirthdayResponse
+                {
+                    Id = birthday.Id,
+                    Name = birthday.Name,
+                    SecondName = birthday.SecondName,
+                    Date = birthday.Date,
+                    PhotoGuid = birthday.PhotoGuid.ToString(),
+                    PhotoName = birthday.PhotoName,
+                    PhotoType = birthday.PhotoType,
+                    PhotoContent = birthday.PhotoContent,
+                    Age = FindAge(birthday.Date)
+                }),
+                Total = total,
+                Offset = request.Offset,
+                Limit = request.Limit
+            };
+        }
+
 
         // finding age
         private int? FindAge(DateTime? date)

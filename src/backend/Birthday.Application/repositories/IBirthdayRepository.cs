@@ -15,8 +15,9 @@ namespace Birthday.Application.interfaces
     {
         Task<List<Person>> GetPagedBirthdays(Expression<Func<Person, bool>> predicate, int limit, CancellationToken cancellationToken);
         Task<List<Person>> GetBirthdaysOrderedByDate(int limit, int offset, CancellationToken cancellationToken);
-        Task<IEnumerable<Person>> GetPagedByName(int offset, int limit, CancellationToken cancellationToken);
-
+        Task<IEnumerable<Person>> GetPagedSortByName(int offset, int limit, CancellationToken cancellationToken);
+        Task<IEnumerable<Person>> FindByName(string searchName, int offset, int limit, CancellationToken cancellationToken);
+        Task<int> Count(Expression<Func<Person, bool>> predicate, CancellationToken cancellationToken);
 
     }
 }

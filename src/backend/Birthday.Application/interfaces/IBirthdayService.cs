@@ -13,6 +13,6 @@ namespace Birthday.Application
         Task<GetPagedBirthday.Response> GetPaged(GetPagedBirthday.Request request, CancellationToken cancellationToken);
         Task<GetById.Response> GetById(GetById.Request request, CancellationToken cancellationToken);
         Task<GetNext.Response> GetNext(GetNext.Request request, CancellationToken cancellationToken);
-
+        Task<FindByName.Response> FindByName(FindByName.Request request, CancellationToken cancellationToken);        
     }
 }

@@ -48,7 +48,7 @@ namespace Birthday.Infrastructure.DataAccess.Repositories
 
 
 
-        public async Task<IEnumerable<Person>> GetPagedByName(int offset, int limit, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Person>> GetPagedSortByName(int offset, int limit, CancellationToken cancellationToken)
         {
             return await _dbContext
                 .Set<Person>()
@@ -59,6 +59,23 @@ namespace Birthday.Infrastructure.DataAccess.Repositories
                 .ToListAsync(cancellationToken);
         }
 
-       
+        public async Task<IEnumerable<Person>> FindByName(string searchName, int offset, int limit, CancellationToken cancellationToken)
+        {
+            return await _dbContext
+                   .Set<Person>()
+                   .Where(p => p.Name.Contains(searchName) || p.SecondName.Contains(searchName))
+                   .OrderBy(p => p.Name)
+                   .Skip(offset)
+                   .Take(limit)
+                   .ToListAsync(cancellationToken);
+        }
+
+        public async Task<int> Count(Expression<Func<Person, bool>> predicate, CancellationToken cancellationToken)
+        {
+            return await _dbContext
+                .Set<Person>()
+                .Where(predicate)
+                .CountAsync(cancellationToken);
+        }
     }
 }
