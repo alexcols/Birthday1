@@ -10,9 +10,9 @@ services:
         - POSTGRES_DB=Birthday
         - POSTGRES_PASSWORD=password123
     ports: 
-        - "5432:5432"
+        - "4040:5432"
     volumes: # persist data even if container shuts down
-        - postgres_data:/var/lib/postgresql/data/
+        - postgres_data:/var/lib/postgresql/data1/
 
 
       

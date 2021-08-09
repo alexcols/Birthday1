@@ -47,6 +47,7 @@ namespace Birthday.PublicAPI.Controllers
             public string Name { get; set; }
             [MinLength(2), MaxLength(25)]
             public string SecondName { get; set; }
+            [Required]
             public string Birthday { get; set; }                      
             public IFormFile Image { get; set; }
         }
