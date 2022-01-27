@@ -6,6 +6,7 @@ using Birthday.Infrastructure;
 using Birthday.Infrastructure.DataAccess;
 using Birthday.Infrastructure.DataAccess.Repositories;
 using Birthday.PublicAPI.Controllers;
+using Birthday.PublicAPI.Modules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -34,10 +35,12 @@ namespace Birthday.PublicAPI
 
             services.AddDataAccessModule(configuration => configuration.InPostgress(Configuration.GetConnectionString("PostgresDb")));
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Birthday.PublicAPI", Version = "v1" });
-            });
+            services.AddSwaggerModule();
+
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Birthday.PublicAPI", Version = "v1" });
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,6 +63,8 @@ namespace Birthday.PublicAPI
 
             app.UseRouting();
 
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -43,3 +43,5 @@ Add-Migration UpX1
 - Обновление БД
 
 Update-Database
+
+*где UpX1 имя миграции
