@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31025.194
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Birthday.PublicAPI", "Birthday.PublicAPI\Birthday.PublicAPI.csproj", "{DD06DEF9-8DC5-40D0-A84D-5611A32D2B9F}"
 EndProject
@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{A5C54CCE-8
 	ProjectSection(SolutionItems) = preProject
 		..\..\docker-compose.yml = ..\..\docker-compose.yml
 		README.md = README.md
+		Readme1.md = Readme1.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2FB55094-1187-4032-8C1A-FBE7A9868A45}"
