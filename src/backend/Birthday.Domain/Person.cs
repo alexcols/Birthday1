@@ -8,11 +8,15 @@ namespace Birthday.Domain
         public string Name { get; set; }
         public string SecondName { get; set; }
 
+        public string Email { get; set; }
+
         
         public DateTime Date { get; set; }
 
         //date for sort, default year is 0004(includes february, 29)
         public DateTime DateWithoutYear { get; set; }
+
+        public int authorId { get; set; }
 
         public Guid PhotoGuid { get; set; }
         public string PhotoName { get; set; }
